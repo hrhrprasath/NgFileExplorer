@@ -22,21 +22,13 @@
 			.fxd{
 				position: fixed;
 			}
-			.toolmbtnclicked
+			.iconsize
 			{
-				border-color:  #0185c1;
-				-webkit-box-shadow: 0 0 2px 1px rgba(0,0,0,0.5);
-				box-shadow: 0 0 2px 3px  #0185c1;
+				font-size: 30px !important;
 			}
-			ul.abt {
-				list-style-type: square;
-				margin:10px;
-				padding:10px;
-			}
-
 		</style>
 
-  <title>DICOM VIEWER HTML5</title>
+  <title>NGFileExplorer</title>
     </head>
     <body ng-app="ngfileexplorer" ng-controller="ctrl" >
 		<div class="bar bar-dark fxd">
@@ -49,19 +41,13 @@
 			</div>
 		</div>
 		<div  class = "list" style="padding-top: 15px;width:99%;overflow-y:auto;height:100%;display:block;position:absolute;margin:0px;margin-top:43px;z-index:45;padding:10px;padding-bottom:53px">
-			<!-- <div class="item item-divider" style="background-color:black;color:white">
-			 Folders:
-			 </div> -->
-			<div class="item item-divider " ng-repeat="o in dirs" ng-click="OpenSelectedItem(o.name,'d')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-folder" style=" font-size: 30px; " ng-click="OpenSelectedItem(o.name,'d')"></a>&ensp;{{o.name}}</div>
-			<!-- <div class="item item-divider" style="background-color:black;color:white">
-			 Files
-			</div> -->
-			<div class="item item-divider" ng-repeat="i in files" ng-click="OpenSelectedItem(i.name,'f')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-document-text" style=" font-size: 30px; " ng-click="OpenSelectedItem(i.name,'f')" ></a>&ensp;{{i.name}}</div>
+			<div class="item item-divider " ng-repeat="o in dirs" ng-click="OpenSelectedItem(o.name,'d')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-folder iconsize"  ng-click="OpenSelectedItem(o.name,'d')"></a>&ensp;{{o.name}}</div>
+			<div class="item item-divider" ng-repeat="i in files" ng-click="OpenSelectedItem(i.name,'f')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-document-text iconsize" ng-click="OpenSelectedItem(i.name,'f')" ></a>&ensp;{{i.name}}</div>
 		</div>
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/ionic.bundle.min.js"></script>
-        <script type="text/javascript" src="js/Explorer.js"></script>
+        <script type="text/javascript" src="js/NgFileExplorer.js"></script>
         <script type="text/javascript">
 
 			var console={};
@@ -71,265 +57,7 @@
 			console.warn=function(msg){
 				alert("warn: "+msg)
 			};
-			angular.module('ngfileexplorer', ['ionic'/*,'ngCordova'*/])
-			 .factory('$explorer',function(){
-				 	 var root = null; // File System root variable
-				     var currentDir = null; // Current DirectoryEntry listed
-					 var parentDir = null; // Parent of the current directory
-					 var activeItem = null; // The clicked item
-					 var activeItemType = null; // d-directory, f-file
-					 var clipboardItem = null; // file or directory for copy or move 
-					 var clipboardAction = null; // c-copy, m-move
-					 var UpdateScope = null; 
-					 var listDir = function (directoryEntry){
-						try
-						{
-							if( !directoryEntry.isDirectory )
-							console.log('listDir incorrect type');
-							currentDir = directoryEntry; // set current directory
-							
-							var sucess = function(par){ // success get parent
-								parentDir = par; // set parent directory
-								//if( (parentDir.name == 'sdcard' && currentDir.name != 'sdcard') || parentDir.name != 'sdcard' ) 
-								//console.log(parentDir.name +"  "+ currentDir.name) 
-							}.bind(this);
-							var error = function(error){ // error get parent
-								console.log('Get parent error: '+error.code);
-							};
-							//directoryEntry.getParent(sucess,error);
-							window.resolveLocalFileSystemURI(currentDir.nativeURL,
-								  function(entry){
-								entry.getParent( 
-								  function(filesystem){
-									
-								  },
-								  function(err){
-										// once again Eclipse is not Chrome, so I stringify the objects so I can see them in the console
-									console.log('### ERR: filesystem.directoryUp() getParent -' + (JSON.stringify(err)));
-								  }
-								);
-								  },
-								  function(err){
-								console.log('### ERR: filesystem.directoryUp() -' + (JSON.stringify(err)));
-								  }
-								);
-							//resolveLocalFileSystemURI
-							var directoryReader = directoryEntry.createReader();
-							var readSucess =function(entries){
-								
-								var dirArr = new Array();
-								var fileArr = new Array();
-								for(var i=0; i<entries.length; ++i){ // sort entries
-									var entry = entries[i];
-									if( entry.isDirectory && entry.name[0] != '.' ) dirArr.push(entry);
-									else if( entry.isFile && entry.name[0] != '.' ) fileArr.push(entry);
-								}
-					//			console.log(dirArr.length +"||"+ fileArr.length);
-								UpdateScope(dirArr,fileArr);
-							}.bind(this);
-							var readError = function(error){
-								console.log('listDir readEntries error: '+error.code);
-							};
-							directoryReader.readEntries(readSucess,readError);
-						}
-						catch(e)
-						{
-						 console.log("listDir :  "+e.message)
-						}		
-					};
-					var openItem  = function (type){
-					try{
-							if( type == 'd' ){
-								listDir(activeItem);
-							} else if(type == 'f'){
-								readFile(activeItem);
-							}
-							}
-						catch(e)
-						{
-						 console.log("openItem :  "+e.message)
-						}
-					};
-					var readFile = function (fileEntry){
-					try{
-							if( !fileEntry.isFile )
-							console.log('readFile incorrect type');
-							var sucess = function(file){
-								/*var reader = new FileReader();
-								reader.onloadend = function(evt) {
-									console.log("Read as data URL");
-									console.log(evt.target.result); // show data from file into console
-								};
-								reader.readAsDataURL(file);*/
-								UpdateScope(null,null,file);
-							}.bind(this);
-							var error = function(error){
-								console.log("file read error:"+evt.target.error.code);
-							};
-							fileEntry.file(sucess,error);
-						}
-						catch(e)
-						{
-						 console.log("readFile :  "+e.message)
-						}
-					};
-				return {
-					getFileSystem :function (){
-						try{
-						var sucess = function(fileSystem){ // success get file system
-								root = fileSystem.root;
-								listDir(root);
-							}.bind(this);
-						var error = function(evt){ // error get file system
-								console.log("File System Error: "+evt.target.error.code);
-							};
-						window.requestFileSystem(LocalFileSystem.PERSISTENT, 0,sucess,error);
-						}
-						catch(e)
-						{
-						 console.log("listDir :  "+e.message)
-						}	
-					},
-					//listDir : listDir,
-					readFile : readFile,
-					openItem  : openItem,
-					getActiveItem : function (name, type){
-					try{
-					//console.log(activeItemType +"||"+type);
-							var sucess =function(dir){ // success find directory
-							//console.log("cb dir");
-										activeItem = dir;
-										activeItemType = type;
-										openItem('d');
-									}.bind(this);
-							var error = function(error){ // error find directory
-										console.log('Unable to find directory: '+error.code);
-									};
-							var fileSucess = function(file){ // success find file
-							//console.log("cb file")
-										activeItem = file;
-										activeItemType = type;
-										openItem('f');
-								}.bind(this);
-							var fileError = function(error){ // error find file
-										console.log('Unable to find file: '+error.code);
-									};
-							if( type == 'd' && currentDir != null ){
-								//console.log("dir:"+name);
-								currentDir.getDirectory(name, {create:false, exclusive: false},sucess,error);
-							} else if(type == 'f' && currentDir != null){
-								//console.log("File:"+name);
-								currentDir.getFile(name, {create:false, exclusive: false},fileSucess,fileError);
-							}
-						}
-						catch(e)
-						{
-							console.log("getActiveItems :  "+e.message)
-						}
-					},
-					getClipboardItem : function (action){
-					try{
-							if( activeItem != null) {
-								clipboardItem = activeItem;
-								clipboardAction = action;
-							}
-						}
-						catch(e)
-						{
-							console.log("getClipboardItem : "+e.message)
-						}
-					},
-					registorCallBack : function(callback){
-						UpdateScope = callback;
-					},
-					getParentDirectory : function (){
-						return parentDir;
-					},
-					getcurrentDirectory : function (){
-						return currentDir;
-					},
-					back : function() {
-						if(parentDir)
-						listDir(parentDir);
-					}
-				};
-			 })
-			 .controller('ctrl',['$scope','$explorer', function($scope,explorer) {
-				$scope.dirs =[];
-				$scope.files =[];
-				$scope.openUrl =function(url)
-				{
-					navigator.app.loadUrl(url, { openExternal:true })
-				}
-				var callBack = function(dirs,files,file)
-				{
-				try{
-						if(dirs && files){
-							$scope.$apply(function(){
-								$scope.dirs = dirs;
-								$scope.files = files;
-							});
-						}
-						if(file)
-						{
-						//alert(JSON.stringify(explorer.getcurrentDirectory())+'\n'+JSON.stringify(file));//JSON.stringify( window.plugins.fileOpener.open)
-						 window.plugins.fileOpener.open(explorer.getcurrentDirectory().nativeURL +file.name)
-						//window.cordova.plugins.FileOpener.openFile(,{}, {});
-						}
-					}
-					catch(e)
-					{
-						console.log("Update erroe:"+e.message)
-					}
-				}.bind(this);
-				explorer.registorCallBack( callBack);
-				document.addEventListener("deviceready",function() {
-				try{
-					explorer.getFileSystem();
-					//alert(JSON.stringify(cordova.file.dataDirectory.externalDataDirectory));
-					}
-					catch(e)
-					{
-					console.log("divicereade:"+e.message);
-					}
-				}, false);
-				$scope.OpenSelectedItem = function(name,type)
-				{
-					explorer.getActiveItem(name, type);
-				}
-				$scope.back = function()
-				{
-					explorer.back();
-				}
-			}]);
+			
 		</script>
-       <!-- <script type="text/javascript">
-				cordova.define("cordova/plugin/fileopener",
-			  function(require, exports, module) {
-				var exec = require("cordova/exec");
-				var FileOpener = function () {};
-
-			FileOpener.prototype.open = function(url) {
-				exec(null, null, "FileOpener", "openFile", [url]);
-			};
-
-			FileOpener.prototype.setTAG = function(tag) {
-				exec(null, null, "FileOpener", "setTAG", [tag]);
-			};
-			var fileOpener = new FileOpener();
-				module.exports = fileOpener;
-
-			});
-			/**
-			 * Load Plugin
-			 */
-			if (!window.plugins) {
-				window.plugins = {};
-			}
-			if (!window.plugins.fileOpener) {
-				window.plugins.fileOpener = cordova.require("cordova/plugin/fileopener");
-			}
-		</script> -->
-		
     </body>
 </html>
