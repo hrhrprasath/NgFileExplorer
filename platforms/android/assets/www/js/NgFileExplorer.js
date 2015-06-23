@@ -1,4 +1,4 @@
-angular.module('ngfileexplorer', ['ionic'/*,'ngCordova'*/])
+angular.module('ngfileexplorer', [/*'ionic','ngCordova'*/])
 .factory('$explorer',function(){
 		 var root = null; // File System root variable
 		 var currentDir = null; // Current DirectoryEntry listed
