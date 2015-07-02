@@ -17,8 +17,6 @@ angular.module('ngfileexplorer', [])
 				
 				var sucess = function(par){ // success get parent
 					parentDir = par; // set parent directory
-					//if( (parentDir.name == 'sdcard' && currentDir.name != 'sdcard') || parentDir.name != 'sdcard' ) 
-					//console.log(parentDir.name +"  "+ currentDir.name) 
 				}.bind(this);
 				var error = function(error){ // error get parent
 					console.log('Get parent error: '+error.code);
@@ -34,7 +32,6 @@ angular.module('ngfileexplorer', [])
 						if( entry.isDirectory && entry.name[0] != '.' ) dirArr.push(entry);
 						else if( entry.isFile && entry.name[0] != '.' ) fileArr.push(entry);
 					}
-		//			console.log(dirArr.length +"||"+ fileArr.length);
 					UpdateScope(dirArr,fileArr);
 				}.bind(this);
 				var readError = function(error){
@@ -65,12 +62,6 @@ angular.module('ngfileexplorer', [])
 				if( !fileEntry.isFile )
 				console.log('readFile incorrect type');
 				var sucess = function(file){
-					/*var reader = new FileReader();
-					reader.onloadend = function(evt) {
-						console.log("Read as data URL");
-						console.log(evt.target.result); // show data from file into console
-					};
-					reader.readAsDataURL(file);*/
 					UpdateScope(null,null,file);
 				}.bind(this);
 				var error = function(error){
@@ -100,14 +91,11 @@ angular.module('ngfileexplorer', [])
 			 console.log("listDir :  "+e.message)
 			}	
 		},
-		//listDir : listDir,
 		readFile : readFile,
 		openItem  : openItem,
 		getActiveItem : function (name, type){
 		try{
-		//console.log(activeItemType +"||"+type);
 				var sucess =function(dir){ // success find directory
-				//console.log("cb dir");
 							activeItem = dir;
 							activeItemType = type;
 							openItem('d');
@@ -116,7 +104,6 @@ angular.module('ngfileexplorer', [])
 							console.log('Unable to find directory: '+error.code);
 						};
 				var fileSucess = function(file){ // success find file
-				//console.log("cb file")
 							activeItem = file;
 							activeItemType = type;
 							openItem('f');
@@ -125,10 +112,8 @@ angular.module('ngfileexplorer', [])
 							console.log('Unable to find file: '+error.code);
 						};
 				if( type == 'd' && currentDir != null ){
-					//console.log("dir:"+name);
 					currentDir.getDirectory(name, {create:false, exclusive: false},sucess,error);
 				} else if(type == 'f' && currentDir != null){
-					//console.log("File:"+name);
 					currentDir.getFile(name, {create:false, exclusive: false},fileSucess,fileError);
 				}
 			}
@@ -167,6 +152,8 @@ angular.module('ngfileexplorer', [])
  .controller('exploreCtrl',['$scope','$explorer', function($scope,explorer) {
 	$scope.dirs =[];
 	$scope.files =[];
+	$scope.exploreReady = false;
+	$scope.currentDirPath="";
 	$scope.openUrl =function(url)
 	{
 		navigator.app.loadUrl(url, { openExternal:true })
@@ -178,34 +165,37 @@ angular.module('ngfileexplorer', [])
 				$scope.$apply(function(){
 					$scope.dirs = dirs;
 					$scope.files = files;
+					$scope.currentDirPath=explorer.getcurrentDirectory().fullPath;
 				});
 			}
 			if(file)
 			{
 			 window.plugins.fileOpener.open(explorer.getcurrentDirectory().nativeURL +file.name)
 			}
+			
 		}
 		catch(e)
 		{
-			console.log("Update erroe:"+e.message)
+			console.log("Update error:"+e.message)
 		}
 	}.bind(this);
 	explorer.registorCallBack( callBack);
 	document.addEventListener("deviceready",function() {
 		try{
 			explorer.getFileSystem();
+			$scope.exploreReady = true;
 		}
 		catch(e)
 		{
-			console.log("divicereade:"+e.message);
+			console.log("divicereade event Error :"+e.message);
 		}
 	}, false);
 	$scope.OpenSelectedItem = function(name,type)
 	{
 		explorer.getActiveItem(name, type);
-	}
+	};
 	$scope.back = function()
 	{
 		explorer.back();
-	}
+	};
 }]);
