@@ -52,8 +52,8 @@
 		{{currentDirPath}}
 		</div>
 		<div  class = "list" style="padding-top: 15px;width:99%;overflow-y:auto;height:100%;display:block;position:absolute;margin:0px;margin-top:88px;z-index:45;padding:10px;padding-bottom:98px">
-			<div class="item item-divider " ng-repeat="o in dirs" ng-click="OpenSelectedItem(o.name,'d')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-folder iconsize"  ng-click="OpenSelectedItem(o.name,'d')"></a>&ensp;{{o.name}}</div>
-			<div class="item item-divider" ng-repeat="i in files" ng-click="OpenSelectedItem(i.name,'f')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-document-text iconsize" ng-click="OpenSelectedItem(i.name,'f')" ></a>&ensp;{{i.name}}</div>
+			<div class="item item-divider " ng-repeat="o in dirs" ng-click="OpenSelectedItem(o.name,'Directory')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-folder iconsize"  ng-click="OpenSelectedItem(o.name,'d')"></a>&ensp;{{o.name}}</div>
+			<div class="item item-divider" ng-repeat="i in files" ng-click="OpenSelectedItem(i.name,'File')" style="width:100%;text-align:left;overflow:hidden"><a class="icon ion-document-text iconsize" ng-click="OpenSelectedItem(i.name,'f')" ></a>&ensp;{{i.name}}</div>
 		</div>
 		<div ng-hide="dirs.length || files.length " >
 			<div class="emptymsg fxd" ng-show="exploreReady">Folder is Empty...<div>
@@ -62,6 +62,7 @@
         <script type="text/javascript" src="cordova.js"></script>		
         <script type="text/javascript" src="js/angular.min.js"></script>
         <script type="text/javascript" src="js/NgFileExplorer.js"></script>
+        <script type="text/javascript" src="js/Demo.js"></script>
         <script type="text/javascript">
 
 			var console={};
@@ -71,8 +72,7 @@
 			console.warn=function(msg){
 				alert("warn: "+msg)
 			};
-		angular.module('Demo', ['ngfileexplorer']);
-
+		
 		</script>
     </body>
 </html>

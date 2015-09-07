@@ -44,6 +44,7 @@ C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\fonts
 C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\fonts\ionicons.woff \
 C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\img\logo.png \
 C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\js\angular.min.js \
+C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\js\Demo.js \
 C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\js\NgFileExplorer.js \
 C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\plugins\com.phonegap.plugins.fileopener \
 C:\Users\Hari\Documents\GitHub\NgFileExplorer\platforms\android\assets\www\plugins\org.apache.cordova.file \
