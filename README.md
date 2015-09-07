@@ -59,7 +59,8 @@ callback will be fired with parent directory's Directory Object Collection and F
   
   `explore.getcurrentDirectory()` will return parent current object
 
-  For more detatils see <a href="https://github.com/hrhrprasath/NgFileExplorer/blob/master/www/js/Demo.js"> demo <s>
+  For more detatils see <a href="https://github.com/hrhrprasath/NgFileExplorer/blob/master/www/js/Demo.js"> demo </a>
+  
   Note: this app is restricted to use phone memory only for now
 Download
 ========
