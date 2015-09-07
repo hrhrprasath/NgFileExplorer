@@ -57,7 +57,7 @@ callback will be fired with parent directory's Directory Object Collection and F
 	
   `explore.getParentDirectory()` will return parent directory object
   
-  `explore.getcurrentDirectory()` will return parent current object
+  `explore.getcurrentDirectory()` will return current directory object
 
   For more detatils see <a href="https://github.com/hrhrprasath/NgFileExplorer/blob/master/www/js/Demo.js"> demo </a>
   
