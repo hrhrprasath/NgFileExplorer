@@ -1,5 +1,6 @@
 # NgFileExplorer
   FileExplorer angular app for cordova integration.
+  
 Dependency
 ==========
 &emsp;<a href="http://github.com/apache/cordova-plugin-file">cordova-plugin-file</a>
